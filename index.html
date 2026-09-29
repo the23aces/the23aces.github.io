@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0e12">
+  <meta name="description" content="Browse and download IPA files from the collection.">
+  <title>ipa's — App downloads</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23c7f36b'/%3E%3Cpath d='M27 28h10v24H27zM27 12h10v10H27z' fill='%230b0e12'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./config.js"></script>
+  <script defer src="./github.js"></script>
+  <script defer src="./app.js"></script>
+  <noscript><style>#skeleton, #load-status { display: none; }</style></noscript>
+</head>
+<body>
+  <a class="skip-link" href="#downloads">Skip to downloads</a>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="ipa's home">
+        <span class="brand-mark" aria-hidden="true">i</span>
+        <span data-brand>ipa's</span>
+      </a>
+      <span class="header-label">THE APP ARCHIVE</span>
+      <a class="source-link" id="source-link" hidden target="_blank" rel="noopener noreferrer">GitHub repository</a>
+    </header>
+
+    <main id="downloads" tabindex="-1">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow"><span class="tiny-square" aria-hidden="true"></span> THE COLLECTION</p>
+          <h1 id="page-title">App downloads<span>.</span></h1>
+          <p class="intro-copy">Your collection of IPA files. Pick an app and download.</p>
+        </div>
+        <div class="format-tag" aria-label="iOS app packages, IPA format">
+          <span class="format-extension">.ipa</span>
+          <span>iOS app packages</span>
+        </div>
+      </section>
+
+      <section class="collection" aria-labelledby="collection-title">
+        <div class="collection-toolbar">
+          <div class="collection-heading">
+            <h2 id="collection-title">All downloads</h2>
+            <span class="file-count" id="file-count" aria-label="File count">—</span>
+          </div>
+          <button class="refresh-button" id="refresh-button" type="button" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19.5 8A8 8 0 1 0 20 15M20 3v6h-6"/></svg>
+            Refresh
+          </button>
+        </div>
+
+        <div class="notice" id="notice" role="status" hidden></div>
+        <p class="load-status" id="load-status" role="status" aria-live="polite">Loading the collection…</p>
+
+        <div class="file-grid" id="skeleton" aria-hidden="true">
+          <div class="skeleton-card"><i></i><b></b><span></span><em></em></div>
+          <div class="skeleton-card"><i></i><b></b><span></span><em></em></div>
+          <div class="skeleton-card"><i></i><b></b><span></span><em></em></div>
+        </div>
+
+        <div class="file-grid" id="file-grid" hidden></div>
+
+        <div class="state-panel" id="state-panel" hidden>
+          <span class="state-mark" aria-hidden="true">.ipa</span>
+          <h3 id="state-title"></h3>
+          <p id="state-message"></p>
+          <div class="setup-instructions" id="setup-instructions" hidden>
+            <code>owner: "YOUR-GITHUB-USERNAME",<br>repo: "ipas",</code>
+            <p>Set these in <strong>config.js</strong>, then reload this page. Use the exact repository name from its GitHub URL.</p>
+          </div>
+          <button class="retry-button" id="retry-button" type="button" hidden>Try again</button>
+        </div>
+        <noscript><div class="state-panel"><h3>JavaScript is needed to load the files.</h3><p>Enable JavaScript and reload this page to browse the collection.</p></div></noscript>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-summary"><span class="footer-brand" data-brand>ipa's</span><span id="collection-summary">IPA downloads</span></div>
+      <p id="sync-status">Files hosted on GitHub</p>
+    </footer>
+    <p class="install-note">Downloading an IPA does not install it. Use a compatible installer for your device.</p>
+  </div>
+</body>
+</html>
