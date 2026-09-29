@@ -61,11 +61,48 @@
     ["#203437", "#9fdbd8"], ["#382532", "#efb1d1"],
   ];
 
+  function formatDisplayName(filename) {
+    const original = String(filename).replace(/\.ipa$/i, "").trim();
+    // These names describe the same component. Preserve component order,
+    // keep spoti.pw's version, and omit Eevee/Spotify's extra build versions.
+    const tokens = original.replace(/\beevee[-_\s]+spotify\b/gi, "eeveespotify")
+      .split(/[-_+\s]+/).filter(Boolean);
+    const components = [];
+    let recognized = tokens.length > 0;
+    for (const token of tokens) {
+      const name = token.toLowerCase();
+      if (name === "spoti.pw") {
+        components.push({ name: "spoti.pw", version: "" });
+      } else if (name === "eevee" || name === "eeveespotify") {
+        components.push({ name: "eevee", version: "" });
+      } else if (components.length && /^v?\d+(?:\.\d+)*$/i.test(token)) {
+        const component = components[components.length - 1];
+        if (component.name === "spoti.pw" && !component.version) {
+          component.version = token.replace(/^v/i, "");
+        }
+      } else if (components.length && /^(?:alpha|beta|rc|prerelease|preview|nightly|dev|stable|release)(?:\.?\d+)*$/i.test(token)) {
+        // Release-channel labels are omitted from the compact card title.
+      } else {
+        recognized = false;
+        break;
+      }
+    }
+    if (recognized && components.length) {
+      return components.map(component => component.name + (component.version ? ` ${component.version}` : "")).join(" + ");
+    }
+    // For other apps, keep their words and versions instead of guessing what
+    // they mean. Only remove a trailing prerelease label when a version exists.
+    const cleaned = /\d+\.\d+/.test(original)
+      ? original.replace(/[-_\s]+(?:alpha|beta|rc|prerelease|preview|nightly|dev)(?:[-_.\s]*\d+)*$/i, "")
+      : original;
+    return cleaned.replace(/[-_]+/g, " ").replace(/\s*\+\s*/g, " + ").replace(/\s+/g, " ").trim() || original;
+  }
+
   function card(file) {
     const article = element("article", "file-card");
     const top = element("div", "card-top");
-    const displayName = file.name.replace(/\.ipa$/i, "").replace(/_/g, " ");
-    const words = displayName.split(/[\s.-]+/).filter(Boolean);
+    const displayName = formatDisplayName(file.name);
+    const words = displayName.split(/[\s.+-]+/).filter(Boolean);
     const initials = words.length > 1 ? `${[...words[0]][0]}${[...words[1]][0]}` : [...displayName].slice(0, 2).join("");
     const icon = element("span", "file-icon", (initials || "IP").toUpperCase());
     icon.setAttribute("aria-hidden", "true");
@@ -74,6 +111,7 @@
     icon.style.setProperty("--tile-fg", colors[hash][1]);
     top.append(icon, element("span", "file-extension", ".IPA"));
     const heading = element("h3", "file-name", displayName || file.name);
+    heading.title = file.name;
     const path = element("p", "file-path", file.path);
     const meta = element("div", "file-meta");
     meta.append(element("span", "file-size", archive.formatSize(file.size)), element("span", "file-origin", file.label));
@@ -81,12 +119,12 @@
     const download = element("a", "download-button", "Download");
     download.href = file.url;
     download.download = file.name;
-    download.setAttribute("aria-label", `Download ${file.name}, ${archive.formatSize(file.size)}`);
+    download.setAttribute("aria-label", `Download ${displayName}, ${archive.formatSize(file.size)}`);
     const source = element("a", "file-source");
     source.href = file.sourceURL;
     source.target = "_blank";
     source.rel = "noopener noreferrer";
-    source.setAttribute("aria-label", `View ${file.name} on GitHub (opens in a new tab)`);
+    source.setAttribute("aria-label", `View ${displayName} on GitHub (opens in a new tab)`);
     source.title = "View on GitHub";
     // Static interface icon; repository names are inserted only as text.
     source.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3h7l4 4v14H5V3h3Zm6 0v5h5M8 12h8M8 16h6" stroke-linejoin="round"/></svg>';
